@@ -13,12 +13,13 @@ class TodoForm extends Component
 
 
     protected $rules = [
-        'title' => ['required', 'string'],
+        'title' => ['required', 'string', 'min:5'],
         'description' => ['sometimes', 'nullable', 'string']
     ];
 
     protected $messages = [
         'title.required' => 'O campo título é obrigatório',
+        'title.min' => 'O campo título deve ter no mínimo 5 caracteres',
         'title.string' => 'O campo título deve ser uma string',
         'description.string' => 'O campo descrição deve ser uma string',
     ];
@@ -33,11 +34,11 @@ class TodoForm extends Component
             $todo->description = $this->description;
             $todo->save();
 
-            $this->title = "";
-            $this->description = "";
+            $this->reset(['title', 'description']);
 
-            session()->flash('message', 'Tarefa adicionada com sucesso!');
+            session()->flash('success', 'Tarefa adicionada com sucesso!');
         });
+        $this->dispatch('todoAdded')->to(TodoList::class);
     }
     public function render()
 

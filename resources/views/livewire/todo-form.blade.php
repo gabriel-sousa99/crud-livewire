@@ -6,7 +6,7 @@
                     <h2 class="font-semibold text-lg text-gray-800 mb-5">Criar nova tarefa</h2>
                 </div>
                 <div>
-                    <form wire:submit='addTodo'>
+                    <form>
                         <div class="mb-3">
                             <label for="title" class="block  text-sm font-medium text-gray-900">*
                                 Título da tarefa </label>
@@ -30,13 +30,14 @@
                             @enderror
 
                         </div>
-                        <button type="submit"
+                        <button type="submit" wire:click.prevent="addTodo"
                             class="px-4 py-2 bg-blue-500 text-white font-semibold rounded hover:bg-blue-600">Criar
                             +</button>
-
-                        @if (session()->has('message'))
-                            <span class="text-green-500 text-xs">{{ session('message') }}</span>
-                        @endif
+                        <div class="row">
+                            @if (session()->has('success'))
+                                <span class="text-green-500 text-xs">{{ session('success') }}</span>
+                            @endif
+                        </div>
                     </form>
                 </div>
             </div>
