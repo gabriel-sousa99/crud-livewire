@@ -35,6 +35,16 @@ class TodoList extends Component
         $todo->delete();
     }
 
+
+    public function toggle($id)
+    {
+        $todo = Todo::find($id);
+        $todo->completed = !$todo->completed;
+        $todo->save();
+
+        session()->flash("completed", ["id" => $todo->id, "message" => $todo->completed ? 'Tarefa Completa' : 'Tarefa Pendente']);
+    }
+
     public function render()
     {
         return view('livewire.todo-list', [
