@@ -1,42 +1,67 @@
  <div wire:key='{{ $todo->id }}'
      class="todo mb-5 card px-5 py-6 bg-white col-span-1 border-t-2 border-blue-500 hover:shadow">
-     <div class="flex justify-between space-x-2">
+     <div class="flex justify-between space-x-2 items-center">
 
-         <!-- <input type="text" placeholder="Todo.."
-                                class="bg-gray-100  text-gray-900 text-sm rounded block w-full p-2.5"
-                                value="Todo Name">
-
-                                <span class="text-red-500 text-xs block">error</span> -->
-         <div class="flex items-center">
-             <h3 class="text-lg font-semibold text-gray-800">{{ $todo->title }}</h3>
-             @if ($todo->completed)
-                 <span class="text-green-600 mx-2 cursor-pointer" wire:click='toggle({{ $todo->id }})'>
-                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                         stroke="currentColor" class="w-6 h-6">
-                         <path stroke-linecap="round" stroke-linejoin="round"
-                             d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
-                     </svg>
-                 </span>
-             @else
-                 <span class="text-red-600 mx-2 cursor-pointer" wire:click='toggle({{ $todo->id }})'>
-                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                         stroke="currentColor" class="w-6 h-6">
-                         <path stroke-linecap="round" stroke-linejoin="round"
-                             d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                     </svg>
-
-                 </span>
-             @endif
-             @if (session()->has('completed') && $todo->id == session('completed')['id'])
-                 <div class="text-gray-500 text-xs">
-                     {{ session('completed')['message'] }}
+         @if ($editingTodo && $editingTodo['id'] == $todo->id)
+             <div style="width: 75%">
+                 <div class="w-50">
+                     <input type="text" placeholder="Tarefa.."
+                         class="bg-gray-100  text-gray-900 text-sm rounded block w-full p-2.5"
+                         wire:model.debounce.500ms='editingTodoTitle'>
                  </div>
-             @endif
 
-         </div>
+
+                 @error('editingTodoTitle')
+                     <div>
+                         <span class="text-red-500 text-xs block">{{ $message }}</span>
+                     </div>
+                 @enderror
+
+                 <div class="mt-5">
+                     <textarea placeholder="Descrição.." rows="5" class="bg-gray-100  text-gray-900 text-sm rounded block w-full p-2.5"
+                         wire:model.debounce.500ms='editingTodoDescription'></textarea>
+                 </div>
+             </div>
+         @else
+             <div class="flex items-baseline">
+                 <div>
+                     <div class="flex items-center">
+                         <h3 class="text-lg font-semibold text-gray-800">{{ $todo->title }}</h3>
+                         @if ($todo->completed)
+                             <span class="text-green-600 mx-2 cursor-pointer" wire:click='toggle({{ $todo->id }})'>
+                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                     <path stroke-linecap="round" stroke-linejoin="round"
+                                         d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                                 </svg>
+                             </span>
+                         @else
+                             <span class="text-red-600 mx-2 cursor-pointer" wire:click='toggle({{ $todo->id }})'>
+                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                     <path stroke-linecap="round" stroke-linejoin="round"
+                                         d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                 </svg>
+
+                             </span>
+                         @endif
+                         @if (session()->has('completed') && $todo->id == session('completed')['id'])
+                             <div class="text-gray-500 text-xs">
+                                 {{ session('completed')['message'] }}
+                             </div>
+                         @endif
+                     </div>
+                     <p class="text-sm text-gray-600">{{ $todo->description }}</p>
+                 </div>
+
+
+             </div>
+
+         @endif
 
          <div class="flex items-center space-x-2">
-             <button class="text-sm text-teal-500 font-semibold rounded hover:text-teal-800">
+             <button wire:click='edit({{ $todo }})'
+                 class="text-sm text-teal-500 font-semibold rounded hover:text-teal-800">
                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                      stroke="currentColor" class="w-4 h-4">
                      <path stroke-linecap="round" stroke-linejoin="round"
@@ -53,18 +78,18 @@
              </button>
          </div>
      </div>
-     <div class="row my-3">
-         <p class="text-sm text-gray-700"> {{ $todo->description }}</p>
-     </div>
+
      <div class="flex justify-end"> <span class="text-xs text-gray-500">
              {{ $todo->created_at->format('d/m/Y') }}</span>
      </div>
-     <div class="mt-3 text-xs text-gray-700">
-         <!--
-                            <button
-                                class="mt-3 px-4 py-2 bg-teal-500 text-white font-semibold rounded hover:bg-teal-600">Update</button>
-                            <button
-                                class="mt-3 px-4 py-2 bg-red-500 text-white font-semibold rounded hover:bg-red-600">Cancel</button> -->
+     @if ($editingTodo && $editingTodo['id'] == $todo->id)
+         <div class="text-xs text-gray-700">
 
-     </div>
+             <button wire:click='update'
+                 class="mt-2 px-4 py-2 bg-teal-500 text-white font-semibold rounded hover:bg-teal-600">Atualizar</button>
+             <button class="mt-2 px-4 py-2 bg-red-500 text-white font-semibold rounded hover:bg-red-600"
+                 wire:click="$set('editingTodo',null)">Cancelar</button>
+
+         </div>
+     @endif
  </div>
