@@ -24,6 +24,7 @@ class TodoList extends Component
     public function todoAdded()
     {
         $this->getTodos();
+        $this->resetPage();
     }
 
 
@@ -31,6 +32,8 @@ class TodoList extends Component
 
     public function getTodos()
     {
+
+
         return Todo::when($this->search, function ($query) {
             $query->where('title', 'like', '%' . $this->search . '%');
         })->latest()->paginate(5);
@@ -58,8 +61,15 @@ class TodoList extends Component
 
     public function delete($id)
     {
-        $todo = Todo::find($id);
-        $todo->delete();
+        try {
+            $todo = Todo::find($id);
+            if (!$todo) return session()->flash('error', 'Tarefa não encontrada');
+            $todo->delete();
+            $this->resetPage();
+        } catch (\Exception $e) {
+            session()->flash('error', 'Não foi possível excluir a tarefa');
+            return;
+        }
     }
 
 

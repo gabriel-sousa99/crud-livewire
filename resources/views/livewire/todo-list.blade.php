@@ -12,6 +12,9 @@
         </div>
 
     </div>
+    @if (session()->has('error'))
+        @include('livewire.components.alert')
+    @endif
     <div id="todos-list">
         @foreach ($todos as $todo)
             @include('livewire.components.todo-card')
