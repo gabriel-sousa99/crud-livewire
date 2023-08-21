@@ -33,7 +33,6 @@ class TodoList extends Component
     public function getTodos()
     {
 
-
         return Todo::when($this->search, function ($query) {
             $query->where('title', 'like', '%' . $this->search . '%');
         })->latest()->paginate(5);
